@@ -21,47 +21,99 @@ import structure.TreeNode;
 public class Solutions {
 	
 	/**
-	 * <a href="" target="_blank">
-	 *Leetcode 209: </a><p>
-	 * Notes:
-	 * <ul>
-	 * <li>
-	 * </ul>
+	 * leet code 238: product of array except self
+	 */
+	public int[] productExceptSelf(int[] nums) {
+		return null;
+    }
+	
+	/**
+	 * leetcode 223: rectangle area
+	 */
+	public int computeArea(int A, int B, int C, int D, int E, int F, int G, int H) {
+		int xlen = intersect(A, C, E, G);
+		int ylen = intersect(B, D, F, H);
+		
+		int result = Math.abs((A-C) *(B-D)) + Math.abs((E-G) * (F- H));
+		result -= Math.abs(xlen * ylen);
+		
+		return result;
+    }
+	
+	private int intersect(int a1, int a2, int b1, int b2){
+		if(a1 < b1){
+			if(a2 < b1) return 0;
+			else if(a2 > b1  && a2 < b2) return a2 - b1;
+			else return b2 - b1;
+		}else {
+			if(b2 < a1) return 0;
+			else if (b2 > a1 && b2 < a2) return b2 - a1;
+			else return a2 - a1;
+		}
+	}
+	
+	/**
+	 * leetcode 215 : find kth largest number;
+	 */
+	public int findKthLargest(int[] nums, int k) {
+        if(nums == null || nums.length < k) throw new IllegalArgumentException("");
+        
+        
+        return getKth_(nums, 0, nums[nums.length - 1], k);
+    }
+	
+	private int getKth_(int[] nums, int start, int end, int k){
+		int pivot = nums[end];
+		
+		int left = start;
+		int right = end;
+		while(true){
+			
+			while(left < right && nums[left] < pivot) left ++;
+			
+			while(left < right && pivot <= nums[right]) right --;
+			
+			if(left == right) break;
+			
+			swap(nums, left, right);
+		}
+		
+		swap(nums, left, end);
+		
+		if(k == left + 1) return pivot;
+		else if ( k < left + 1) return getKth_(nums, start, left -1, k);
+		else return getKth_(nums, left + 1, end, k);
+	}
+	
+	private void swap(int[] nums, int i, int j){
+		int temp = nums[i];
+		nums[i] = nums[j];
+		nums[j] = temp;
+	}
+	
+	/**
+	 * leetcode 209: Minimum Size Subarray Sum
 	 */
 	public int minSubArrayLen(int s, int[] nums) {
-        if(s == 0 || nums.length == 0) return 0;
-        
-        int sum = nums[0];
-        int l = 0; 
-        int r = 0;
-        int min = Integer.MAX_VALUE;
-        
-        for(r = 1 ; r < nums.length ; r++){
-        	if(sum < s){
-        		sum += nums[r];
-        	}else{
-        		int sum1 = sum;
-        		while (l < r && sum <= s){
-        			l--;
-        			
-        		}
-        	}
-        }
-        
-        while (l < r && r < nums.length-1){
-        	if(sum < s){
-        		r++;
-        		sum += nums[r];
-        	}else {
-        		min = Math.min(min, r-l + 1);
-        		l++;
-        		sum -= nums[l];
-        		r++;
-        		sum += nums[r];
-        	}
-        }
-        
-        return min;
+		if(nums == null ||nums.length == 0) return 0;
+		
+		int from = 0;
+		int sum = nums[0];
+		int min = Integer.MAX_VALUE;
+		for(int i = 1 ; i< nums.length ; i ++){
+			if(sum < s) sum += nums[i];
+			
+			while(sum > s){
+				if(sum - nums[from] >= s){
+					sum -= nums[from];
+					from ++;
+				}
+			}
+			
+			if(sum >= s) min = Math.min(min, i- from + 1);
+		}
+		
+		return min;
     }
 	
 	/**
@@ -1134,8 +1186,20 @@ public class Solutions {
 	public int search(int[] nums, int target) {
 		if(nums == null || nums.length == 0	)	return -1;
 		
-
-		
+		int l = 0; 
+		int r = nums.length;
+		while (l < r){
+			int m = l + (r - l)/ 2;
+			if(nums[m] == target)return m;
+			
+			if(nums[l] <= nums[m]){
+				if(target >= nums[l] && target < nums[m] ) r = m -1;
+				else l = m + 1;
+			}else {
+				if(target <= nums[r] && target > nums[m]) l = m + 1;
+				else r = m -1;
+			}
+		}
 		
 		return -1;
     }
